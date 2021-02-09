@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="timer.mapper.TimeLineMapper">
+	<!-- ********************时间轴表********************* -->
+	<!-- 查询数据 -->
+	<select id="selectAllTimeLine" resultType="TimeLine">
+		select guid,
+			name,
+			createTime
+		from timer.dbo.TimeLine
+		where deleteFlag = 0
+		order by createTime desc
+	</select>
+	<select id="SelectTimeLineById" parameterType="String" resultType="TimeLine">
+		select guid,
+			name,
+			createTime
+		from timer.dbo.TimeLine
+		where deleteFlag = 0 and guid = #{id}
+	</select>
+	<!-- 插入数据 -->
+	<insert id="insertTimeLine" parameterType="TimeLine">
+		insert into timer.dbo.TimeLine(guid,name,createTime,deleteFlag)
+		values(#{guid},#{name},GETDATE(),0)
+	</insert>
+	<!-- 删除数据 -->
+	<!-- **********************异常表********************* -->
+	<insert id="InsertTLog" parameterType="Tlog">
+		INSERT INTO timer.dbo.Tlog ( guid, title, [message], createTime, stackTrack )
+		VALUES
+			( NEWID(), #{title}, #{message}, GETDATE(), #{stackTrack} )
+	</insert>
+</mapper>

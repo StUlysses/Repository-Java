@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="timer.mapper.ArticleMapper">
+	<!--************************ 文章表 ***********************-->
+	<!-- 查询数据 -->
+	<select id="selectArticleList" parameterType="String" resultType="ArticleEntity">
+		SELECT
+			* 
+		FROM
+			timer.dbo.Article 
+		WHERE
+			timeLineID = #{tid}
+			AND deleteFlag IS NULL
+		ORDER BY
+			createTime DESC
+	</select>
+	<!-- 插入数据 -->
+	<insert id="InsertArticle" parameterType="Article">
+		INSERT INTO timer.dbo.Article ( guid, timeLineID, title, content, createTime)
+		VALUES
+			( #{guid}, #{timeLineID}, #{title}, #{content}, GETDATE())
+	</insert>
+	<!-- 软删除 -->
+	<update id="deleteArticleById" parameterType="String">
+		UPDATE timer.dbo.Article 
+		SET deleteFlag = 1 
+		WHERE
+			guid = #{aid}
+	</update>
+	<select id="selectSimpleArticleByAid" parameterType="String" resultType="Article">
+		select 
+			guid,
+			timeLineID,
+			title,
+			content
+		from timer.dbo.Article
+		where deleteFlag is null
+		and guid = #{aid}
+	</select>
+	<!--************************* 附件表 ****************************-->
+	<!-- 插入 -->
+	<insert id="InsertAttachment" parameterType="Attachment">
+		INSERT INTO timer.dbo.Attachment ( guid, createTime, articleId, path )
+		VALUES
+			( #{guid}, GETDATE(), #{articleId}, #{path} )
+	</insert>
+	<!-- 查询 -->
+	<select id="selectAttachmentByaid" parameterType="String" resultType="Attachment">
+		SELECT
+			guid,
+			createTime,
+			path
+		FROM
+			timer.dbo.Attachment 
+		WHERE
+			articleId = #{aid} 
+			AND deleteFlag IS NULL 
+		ORDER BY
+			createTime DESC
+	</select>
+</mapper>
