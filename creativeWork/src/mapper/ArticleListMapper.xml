@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mapper.ArticleListMapper">
+<!-- ****************************文集操作***************************** -->
+<!-- 查询数据 -->
+	<select id="selectAllCorpus" parameterType="int" resultType="corpus">
+		select *
+		from creative.dbo.corpus
+		where uid = #{uid}
+	</select>
+	<select id="selectCorpusNumByUid" parameterType="int" resultType="int">
+		select count(1)
+		from creative.dbo.corpus
+		where uid = #{uid}
+	</select>
+	<select id="selectCorpusCountBuCoid" parameterType="int" resultType="int">
+		select count(1)
+		from creative.dbo.corpuscontent 
+		where coid = #{coid}
+	</select>
+	<select id="selectCorpusByQueryVo" parameterType="queryVo" resultType="corpuscontent">
+		select top 100 c.coid,c.aid,a.title
+		from creative.dbo.corpuscontent c,creative.dbo.article a
+		where c.coid = #{uid}
+		and c.aid = a.id
+		order by c.aid desc
+	</select>
+	<select id="selectCorpusContentByAid" parameterType="corpuscontent" resultType="int">
+		select count(1)
+		from creative.dbo.corpuscontent
+		where coid = #{coid}
+		and aid = #{aid}
+	</select>
+<!-- 插入数据 -->
+	<insert id="insertCorpus" parameterType="corpus">
+		insert into corpus(
+			coname,
+			uid,
+			username
+		)
+		values(
+			#{coname},
+			#{uid},
+			#{username}
+		)
+	</insert>
+	<insert id="insertArticle" parameterType="corpusContent">
+		insert into creative.dbo.corpuscontent(
+			coid,
+			aid
+		)
+		values(
+			#{coid},
+			#{aid}
+		)
+	</insert>
+	<!-- 删除数据 -->
+	<delete id="deleteCorpusContentByCoid" parameterType="int">
+		delete from creative.dbo.corpuscontent
+		where coid = #{coid}
+	</delete>
+	<delete id="deleteCorpusByCoid" parameterType="int">
+		delete from creative.dbo.corpus
+		where coid = #{coid}
+	</delete>
+	<delete id="deleteCorpusContentByAidAndCoid" parameterType="corpuscontent">
+		delete from creative.dbo.corpuscontent
+		where coid = #{coid}
+		and aid = #{aid}
+	</delete>
+	<delete id="deleteCorpusContentByAid" parameterType="int">
+		delete from creative.dbo.corpuscontent
+		where aid = #{aid}
+	</delete>
+	
+<!-- *********************************专题操作********************************** -->
+	<!-- 查询操作 -->
+	<select id="selectThemeByUid" parameterType="int" resultType="theme">
+		select *
+		from creative.dbo.theme
+		where uid = #{uid}
+	</select>
+	<select id="selectThemeCountByTname" parameterType="string" resultType="int">
+		select count(1)
+		from creative.dbo.theme
+		where tname = #{_tname}
+	</select>
+	<select id="selectThemeCountByWord" parameterType="string" resultType="int">
+		select count(1)
+		from creative.dbo.theme
+		where tname like concat('%',#{tname},'%')
+	</select>
+	<select id="selectThemeByQueryVo" parameterType="queryvo" resultType="theme">
+		select top 100 *
+		from creative.dbo.theme
+		where tname like concat('%',#{word},'%')
+		order by tid desc
+	</select>
+	<select id="selectThemeByTid" parameterType="int" resultType="theme">
+		select *
+		from creative.dbo.theme
+		where tid = #{tid}
+	</select>
+	<select id="selectThemeByWord" parameterType="string" resultType="theme">
+		select *
+		from creative.dbo.theme
+		where tname like concat('%',#{word},'%')
+	</select>
+	<!-- 插入操作 -->
+	<insert id="insertTheme" parameterType="theme">
+		insert into creative.dbo.theme(
+			tname,
+			uid,
+			username,
+			info,
+			readerNum,
+			bulletin
+		)
+		values(
+			#{tname},
+			#{uid},
+			#{username},
+			#{info},
+			#{readerNum},
+			#{bulletin}
+		)
+	</insert>
+	<!-- 编辑操作 -->
+	<update id="updateBulletinByUid" parameterType="theme">
+		update creative.dbo.theme
+		set bulletin = #{bulletin}
+		where uid = #{uid}
+	</update>
+	<!-- 删除操作 -->
+	<delete id="deleteThemeByUid" parameterType="int">
+		delete from creative.dbo.theme
+		where uid = #{uid}
+	</delete>
+<!-- ****************************投稿表****************************** -->
+	<!-- 查询操作 -->
+	<select id="selectSubmitByTname" parameterType="queryvo" resultType="submit">
+		select top 20 s.tid,s.tname,s.aid,s.submittime,a.title,a.size,a.collectNum
+		from creative.dbo.submit s,creative.dbo.article a
+		where s.tname = #{word}
+		and s.aid = a.id
+		order by s.submittime desc
+	</select>
+	<select id="selectSubmitCountByWord" parameterType="string" resultType="int">
+		select count(1)
+		from creative.dbo.submit
+		where tname like #{_tname}
+	</select>
+	<select id="selectSubmitCountByTidAndAid" parameterType="submit" resultType="int">
+		select count(1)
+		from creative.dbo.submit
+		where tid = #{tid}
+		and aid = #{aid}
+	</select>
+	<!-- 插入操作 -->
+	<insert id="insertSubmit" parameterType="submit">
+		insert into creative.dbo.submit(
+			tid,
+			tname,
+			aid,
+			submittime
+		)
+		values(
+			#{tid},
+			#{tname},
+			#{aid},
+			#{submittime}
+		)
+	</insert>
+	<!-- 删除操作 -->
+	<delete id="deleteSubmitByTidAndId" parameterType="submit">
+		delete from creative.dbo.submit
+		where tid = #{tid}
+		and aid = #{aid}
+	</delete>
+	<delete id="deleteSubmitById" parameterType="int">
+		delete from creative.dbo.submit
+		where aid = #{id}
+	</delete>
+<!-- ************************收录表******************************** -->
+	<!-- 查询操作 -->
+	<select id="selectAcceptCountByTid" parameterType="int" resultType="int">
+		select count(1)
+		from creative.dbo.accept
+		where tid = #{tid}
+	</select>
+	<select id="selectAcceptByQueryVO" parameterType="queryvo" resultType="accept">
+		select top 20 a.tid,a.tname,a.aid,a.accepttime,r.title,r.size,r.collectNum
+		from creative.dbo.accept a,creative.dbo.article r
+		where a.tid = #{uid}
+		and a.aid = r.id
+		order by a.accepttime desc
+	</select>
+	<select id="selectThemeByAccepttime" resultType="theme">
+		select tid,tname
+		from creative.dbo.accept
+		order by accepttime desc
+	</select>
+	<select id="selectThemeByAid" parameterType="int" resultType="theme">
+		select *
+		from creative.dbo.accept
+		where aid = #{aid}
+	</select>
+	<!-- 插入操作 -->
+	<insert id="insertAccept" parameterType="accept">
+		insert into creative.dbo.accept(
+			tid,
+			tname,
+			aid,
+			accepttime
+		)
+		values(
+			#{tid},
+			#{tname},
+			#{aid},
+			#{accepttime}
+		)
+	</insert>
+	<!-- 删除数据 -->
+	<delete id="deleteAcceptByAid" parameterType="int">
+		delete from creative.dbo.accept
+		where aid = #{id}
+	</delete>
+<!-- ************************订阅表********************** -->
+	<!-- 查询数据 -->
+	<select id="selectFollowCountByUidAndTid" parameterType="follow" resultType="int">
+		select count(1)
+		from creative.dbo.follow
+		where tid = #{tid}
+		and uid = #{uid}
+	</select>
+	<select id="selectFollowByUid" parameterType="int" resultType="follow">
+		select *
+		from creative.dbo.follow
+		where uid = #{uid}
+	</select>
+	<select id="selectFollowCountByTid" parameterType="int" resultType="int">
+		select count(1)
+		from creative.dbo.follow
+		where tid = #{tid}
+	</select>
+	<!-- 插入数据 -->
+	<insert id="insertFollow" parameterType="follow">
+		insert into creative.dbo.follow(
+			tid,
+			tname,
+			uid
+		)
+		values(
+			#{tid},
+			#{tname},
+			#{uid}
+		)
+	</insert>
+	<!-- 删除数据 -->
+	<delete id="cancelFollowTheme" parameterType="follow">
+		delete from creative.dbo.follow
+		where tid = #{tid}
+		and uid = #{uid}
+	</delete>
+</mapper>

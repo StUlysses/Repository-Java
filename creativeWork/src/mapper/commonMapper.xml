@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mapper.commonMapper">
+	<!-- ********************搜索历史表************************** -->
+	<!-- 查询数据 -->
+	<select id="selectWordByWordtime" parameterType="int" resultType="string">
+		select top 10 word
+		from creative.dbo.search
+		where uid = #{uid}
+		order by wordtime desc
+	</select>
+	<!-- 插入数据 -->
+	<insert id="insertSearch" parameterType="search">
+		insert into creative.dbo.search(
+			uid,
+			word,
+			wordtime
+		)
+		values(
+			#{uid},
+			#{word},
+			#{wordtime}
+		)
+	</insert>
+	<!-- 删除数据 -->
+	<delete id="deleteSearchByUid" parameterType="int">
+		delete from creative.dbo.search
+		where uid = #{uid}
+	</delete>
+</mapper>

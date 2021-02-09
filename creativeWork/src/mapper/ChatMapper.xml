@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mapper.ChatMapper">
+<!-- 会话表 -->
+	<!-- 查询数据 -->
+	<select id="selectCommentCountByLid" parameterType="int" resultType="int">
+		select count(1)
+		from creative.dbo.chat
+		where lid = #{lid}
+		and sort = "u"
+	</select>
+	<select id="selectCommentsByLid" parameterType="queryVo" resultType="chat">
+		select top 20 * 
+		from creative.dbo.chat 
+		where lid = #{uid}
+		and sort = "u"
+		order by chattime desc 
+	</select>
+	<select id="selectCommentCountBySid" parameterType="int" resultType="int">
+		select count(1)
+		from creative.dbo.chat
+		where sid = #{sid}
+		and sort = "u"
+	</select>
+	<select id="selectCommentsBySid" parameterType="queryVo" resultType="chat">
+		select top 20 * 
+		from creative.dbo.chat 
+		where sid = #{uid}
+		and sort = "u"
+		order by chattime desc 
+	</select>
+	<select id="selectSystemByLid" parameterType="queryVo" resultType="chat">
+		select top 20 * 
+		from creative.dbo.chat 
+		where lid = #{uid}
+		and sort = "s"
+		order by chattime desc 
+	</select>
+	<select id="selectReviewCountByLid" parameterType="int" resultType="int">
+		select count(1)
+		from creative.dbo.chat
+		where lid = #{lid}
+		and sort = "a"
+	</select>
+	<select id="selectReviewByLid" parameterType="queryvo" resultType="chat">
+		select top 20 * 
+		from creative.dbo.chat 
+		where lid = #{uid}
+		and sort = "a"
+		order by chattime desc 
+	</select>
+	<select id="selectReviewCountBySid" parameterType="int" resultType="int">
+		select count(1)
+		from creative.dbo.chat
+		where sid = #{sid}
+		and sort = "a"
+	</select>
+	<select id="selectReviewBySid" parameterType="queryvo" resultType="chat">
+		select top 20 * 
+		from creative.dbo.chat 
+		where sid = #{uid}
+		and sort = "a"
+		order by chattime desc 
+	</select>
+	<select id="selectReviewByBelong" parameterType="int" resultType="chat">
+		select *
+		from creative.dbo.chat
+		where belong = #{belong}
+		and sort = "a"
+	</select>
+	<select id="selectSystemCommentCount" parameterType="int" resultType="int">
+		select count(1)
+		from creative.dbo.chat
+		where sort = "s"
+		and lid = #{uid}
+	</select>
+	<!-- 插入数据 -->
+	<insert id="insertComment" parameterType="chat">
+		insert into creative.dbo.chat(
+			sort,
+			sid,
+			sname,
+			lid,
+			lname,
+			content,
+			belong,
+			chattime
+		)
+		values(
+			#{sort},
+			#{sid},
+			#{sname},
+			#{lid},
+			#{lname},
+			#{content},
+			#{belong},
+			#{chattime}
+		)
+	</insert>
+</mapper>

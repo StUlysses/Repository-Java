@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mapper.ArticleMapper">
+<!--*********************************文章表*********************************-->
+<!-- 查询数据 -->
+	<select id="selectArticleByQueryVo" parameterType="queryVo" resultType="article">
+		select top 20 * 
+		from creative.dbo.article 
+		<if test="uid != 0">
+			where uid = #{uid} 
+		</if>
+		order by updatetime desc 
+	</select>
+	<select id="selectArticleCountByUid" parameterType="int" resultType="int">
+		select count(1) 
+		from creative.dbo.article 
+		where uid = #{uid}
+	</select>
+	<select id="selectArticleCount" parameterType="int" resultType="int">
+		select count(1) 
+		from creative.dbo.article 
+	</select>
+	<select id="selectArticleById" parameterType="int" resultType="article">
+		select * 
+		from creative.dbo.article 
+		where id = #{id}
+	</select>
+	<select id="selectArticleCountByWord" parameterType="String" resultType="int">
+		select count(1)
+		from creative.dbo.article
+		where title like concat('%',#{word},'%')
+	</select>
+	<select id="selectUidByAid" parameterType="int" resultType="int">
+		select uid
+		from creative.dbo.article
+		where id = #{id}
+	</select>
+	<select id="selectArticleByWord" parameterType="queryVo" resultType="article">
+		select top 20 *
+		from creative.dbo.article
+		where title like concat('%',#{word},'%')
+		order by id desc
+	</select>
+	<select id="selectArticleByUidAndTitle" parameterType="article" resultType="article">
+		select *
+		from creative.dbo.article
+		where uid = #{uid}
+		and title = #{title}
+	</select>
+<!-- 插入数据 -->
+	<insert id="insertArticle" parameterType="article">
+		insert into creative.dbo.article(
+			title,
+			content,
+			uid,
+			username,
+			userinfo,
+			size,
+			collectNum,
+			updatetime,
+			available,
+			cid
+		)
+		values(
+			#{title},
+			#{content},
+			#{uid},
+			#{username},
+			#{userinfo},
+			#{size},
+			0,
+			#{updatetime},
+			5,
+			0
+		);
+	</insert>
+	<!-- 删除数据 -->
+	<delete id="deleteArticleById" parameterType="int">
+		delete from creative.dbo.article 
+		where id = #{id}
+	</delete>
+	<!-- 跟新数据 -->
+	<update id="updateArticleByAid" parameterType="article">
+		update creative.dbo.article 
+		set title = #{title},
+			content = #{content},
+			size = #{size},
+			updatetime = #{updatetime}
+		where id = #{id}
+	</update>
+	<update id="addArticleCollect" parameterType="int">
+		update creative.dbo.article 
+		set collectNum = collectNum+1
+		where id = #{aid}
+	</update>
+	<update id="lessArticleCollect" parameterType="int">
+		update creative.dbo.article 
+		set collectNum = collectNum-1
+		where id = #{aid}
+	</update>
+<!-- *********************************草稿表**************************************** -->
+	<select id="selectDraftById" parameterType="int" resultType="draft">
+		select * 
+		from creative.dbo.draft 
+		where id = #{id}
+	</select>
+	<select id="selectDraftConutByUid" parameterType="int" resultType="int">
+		select count(1) 
+		from creative.dbo.draft 
+		where uid = #{uid}
+	</select>
+	<select id="selectDraftByQueryVo" parameterType="queryVo" resultType="draft">
+		select top 20 * 
+		from creative.dbo.draft 
+		where uid = #{uid} 
+		order by id desc 
+	</select>
+	<!-- 插入数据 -->
+	<insert id="insertDraft" parameterType="draft">
+		insert into creative.dbo.draft(
+			title,
+			content,
+			uid,
+			username,
+			size
+		) 
+		values(
+			#{title},
+			#{content},
+			#{uid},
+			#{username},
+			#{size}
+		);
+	</insert>
+<!-- 删除数据 -->
+	<delete id="deleteDraftById" parameterType="int">
+		delete from creative.dbo.draft 
+		where id = #{id}
+	</delete>
+	<!-- 跟新数据 -->
+	<update id="updateDraftByTAU" parameterType="article">
+		update creative.dbo.draft 
+		set content = #{content},
+			size = #{size}
+		where title = #{title} 
+		and uid = #{uid}
+	</update>
+<!-- *******************************收藏表****************************** -->
+	<!-- 查询数据 -->
+	<select id="selectCollect" parameterType="collect" resultType="int">
+		select count(1) 
+		from creative.dbo.collect 
+		where uid = #{uid} 
+		and aid = #{aid}
+	</select>
+	<select id="selectCollectCountByUid" parameterType="int" resultType="int">
+		select count(1)
+		from creative.dbo.collect
+		where uid = #{uid}
+	</select>
+	<select id="selectCollectByQueryVo" parameterType="queryVo" resultType="collect">
+		select top 20 * 
+		from creative.dbo.collect 
+		where uid = #{uid} 
+		order by cid desc 
+	</select>
+	<!-- 插入数据 -->
+	<insert id="insertCollect" parameterType="collect">
+		insert into creative.dbo.collect(
+			uid,
+			aid,
+			title
+		) 
+		values(
+			#{uid},
+			#{aid},
+			#{title}
+		);
+	</insert>
+	<!-- 更新数据 -->
+	<update id="updateCollectById" parameterType="collect">
+		update creative.dbo.collect 
+		set title = #{title}
+		where aid = #{aid}
+	</update>
+	<!-- 删除数据 -->
+	<delete id="deleteCollectByUidAndAid" parameterType="collect">
+		delete from creative.dbo.collect 
+		where uid = #{uid} 
+		and aid = #{aid}
+	</delete>
+	<delete id="deleteCollectById" parameterType="int">
+		delete from creative.dbo.collect
+		where aid = #{id}
+	</delete>
+</mapper>
